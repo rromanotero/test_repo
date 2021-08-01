@@ -1,1 +1,1 @@
-docker run -d -e PORT=8080 -p 8080:8080 --name python-sample rromanotero/light_sensor:latest
+  docker run -d -e PORT=8080 -p 8080:8080 --name python-sample rromanotero/light_sensor:latest
