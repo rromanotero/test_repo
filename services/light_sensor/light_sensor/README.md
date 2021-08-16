@@ -1,1 +1,0 @@
-LIght Sensor Helm Chart
