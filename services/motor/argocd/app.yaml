@@ -8,9 +8,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/rromanotero/test_repo.git
+    repoURL: https://github.com/rromanotero/test_repo_cd.git
     targetRevision: HEAD
-    path: services/motor/motor
+    path: motor
 
     # # helm specific config
     # helm:
