@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: rromanotero/test_repo_motor
-  tag: master
+  tag: latest
   pullPolicy: IfNotPresent
 
 service:
