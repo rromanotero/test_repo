@@ -9,7 +9,7 @@ app.logger.setLevel(logging.INFO)
 @app.route("/")
 def hello_world():
     app.logger.info("default path")
-    return "Hello, World!!!!!"
+    return "Hello, World!!"
 
 
 @app.route("/hello/<username>")
