@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/rromanotero/test_repo_cd.git
     targetRevision: HEAD
-    path: /helm_charts/motor
+    path: helm_charts/motor
 
     # # helm specific config
     # helm:
