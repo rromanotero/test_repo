@@ -9,7 +9,7 @@ app.logger.setLevel(logging.INFO)
 @app.route("/")
 def hello_world():
     app.logger.info("default path (light sensor)")
-    return "Hello, World!!!!!"
+    return "Hello, World 2!"
 
 
 @app.route("/hello/<username>")
