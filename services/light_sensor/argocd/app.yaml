@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/rromanotero/test_repo_cd.git
     targetRevision: HEAD
-    path: light_sensor
+    path: /helm_charts/light_sensor
 
     # # helm specific config
     # helm:
