@@ -8,9 +8,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/rromanotero/test_repo.git
+    repoURL: https://github.com/rromanotero/test_repo_cd.git
     targetRevision: HEAD
-    path: services/light_sensor/light_sensor
+    path: light_sensor
 
     # # helm specific config
     # helm:
