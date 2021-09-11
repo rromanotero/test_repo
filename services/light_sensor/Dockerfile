@@ -4,7 +4,7 @@ RUN mkdir /app
 RUN mkdir /tests
 
 #Install reqs
-COPY requirements.txt /app
+COPY requirements /app
 RUN python3 -m pip install -r /app/requirements
 
 #Copy src and test
