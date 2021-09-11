@@ -6,8 +6,7 @@ app = Flask(__name__)
 @app.route("/")
 def salute():
     return jsonify({
-        "server_status" : 'OKKKAAAAAYYY (motor)',
-        "ENV" : os.environ['ENV']
+        "server_status" : 'OKKKAAAAAYYY (motor)'
         })
 
 if __name__ == '__main__':
