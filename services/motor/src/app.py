@@ -5,6 +5,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def salute():
+    print("I'm motor")
     return jsonify({
         "server_status" : 'OKKKAAAAAYYY (motor)'
         })
