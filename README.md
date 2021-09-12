@@ -1,7 +1,3 @@
-# Build images with pack
+# Test Repo
 
-```bash
-pack build rromanotero/light_sensor:latest --path services/light_sensor --builder gcr.io/buildpacks/builder:v1
-
-pack build rromanotero/motor:latest --path services/motor --builder gcr.io/buildpacks/builder:v1
-```
+![example workflow](https://github.com/rromanotero/test_repo/actions/workflows/package_services/badge.svg)
