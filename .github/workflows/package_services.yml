@@ -102,10 +102,6 @@ jobs:
           IMAGE_NAME=$ACCOUNT_OWNER'/'$PROJECT_NAME'_'$service_name:$BRANCH_NAME
           SERVICE_PATH=services/$service_name
           echo '----------------------------------------------------------'
-          echo 'Speeding up build'
-          echo '----------------------------------------------------------'
-          docker pull $IMAGE_NAME || true
-          echo '----------------------------------------------------------'
           echo 'Publishing image '$IMAGE_NAME' from path '$SERVICE_PATH
           echo '----------------------------------------------------------'
           cd services/$service_name
