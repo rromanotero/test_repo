@@ -133,7 +133,6 @@ jobs:
       if: success()
       env:
         ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
-        GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
       run: |
         SERVICES_PATH=./services
         echo "SERVICES_PATH="$SERVICES_PATH
@@ -183,6 +182,8 @@ jobs:
         echo "::set-env name=comma_separated_charts_found::$comma_separated_charts_found"
     - name: Upgrade app version
       if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
       run: |
         GITHUB_REPOSITORY_CHARTS=$GITHUB_REPOSITORY"_cd"
         PROJECT_NAME=${GITHUB_REPOSITORY_CHARTS##*/}
