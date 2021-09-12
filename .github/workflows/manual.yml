@@ -75,7 +75,7 @@ jobs:
           echo "found a total of "$num_of_services_found" services"
         fi
 
-        comma_separated_services_found=join_by , $services_found
+        comma_separated_services_found=$(join_by , $services_found)
         echo $comma_separated_services_found
 
         echo "::set-env name=comma_separated_services_found::$comma_separated_services_found"
