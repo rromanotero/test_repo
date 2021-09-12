@@ -192,24 +192,11 @@ jobs:
         IFS=',' read -r -a charts_found <<< "$comma_separated_charts_found"
 
         echo "GITHUB_REPOSITORY_CHARTS="$GITHUB_REPOSITORY_CHARTS
-        echo "PROJECT_NAME="$PROJECT_NAME
-        echo "ACCOUNT_OWNER="$ACCOUNT_OWNER
         echo "BRANCH_NAME="$BRANCH_NAME
         echo "GITHUB_SHA="$GITHUB_SHA
         echo "APP_VERSION="$APP_VERSION
 
         echo "comma_separated_charts_found="$comma_separated_charts_found
-
-        email="rromanotero@gmail.com"
-        username="ci-system"
-        owner=$ACCOUNT_OWNER
-        repo=$PROJECT_NAME
-
-        token=$GITHUB_TOKEN
-
-        git config --global hub.protocol https
-        git config --global user.email $email
-        git config --global user.name $username
 
         CHART_TEMPLATE_PATH=./chart_template.yaml
         cat >$CHART_TEMPLATE_PATH<<EOL
@@ -244,4 +231,13 @@ jobs:
           echo '--------------------------------'
         done
 
-        git add . && git commit -m "app upgrade to "$APP_VERSION && git push origin
+        git config --global hub.protocol https
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+
+        git add . && git commit -m "app upgrade to "$APP_VERSION
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ github.token }}
+        branch: ${{ github.ref }}
