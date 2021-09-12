@@ -53,8 +53,8 @@ jobs:
 
             echo "Checking $SVC_PATH"
 
-            if [ ! -f $SVC_PATH/Procfile ]; then
-              echo "service $SERVICE_NAME is missing its Procfile"
+            if [ ! -f $SVC_PATH/Dockerfile ]; then
+              echo "service $SERVICE_NAME is missing its Dockerfile"
               echo "here's the contents of $SVC_PATH"
               ls -l $SVC_PATH
               exit 1
