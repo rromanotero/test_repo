@@ -116,19 +116,73 @@ jobs:
             --output type=image,push=true .
           cd ../..
         done
-    - name: Checkout CD Repo
+  upgrade_helm_app_version:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Helm Chart repo
       uses: actions/checkout@master
       with:
         repository: rromanotero/test_repo_cd
         ref: master
+    - name: Detect Charts
+      if: success()
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+      run: |
+        SERVICES_PATH=./services
+        echo "SERVICES_PATH="$SERVICES_PATH
+        echo ""
+
+        if [ ! -d $SERVICES_PATH ]; then
+          echo "services directory missing: "$SERVICES_PATH
+          exit 1
+        fi
+
+        charts_found=()
+        for path in $SERVICES_PATH/*; do
+          if [[ -d $path ]]; then
+            SERVICE_NAME=$(basename $path)
+            SVC_PATH=$SERVICES_PATH/$SERVICE_NAME
+
+            echo "Checking $SVC_PATH"
+
+            if [ ! -f $SVC_PATH/Chart.yaml ]; then
+              echo "service $SERVICE_NAME is missing its Chart.yaml"
+              echo "here's the contents of $SVC_PATH"
+              ls -l $SVC_PATH
+              exit 1
+            fi
+
+            echo "found service "$SERVICE_NAME
+            charts_found+=("$SERVICE_NAME")
+          fi
+        done
+
+        if [ ${#charts_found[@]} -eq 0 ]; then
+          echo "no charts found in ./services"
+          exit 1
+        else
+          num_of_charts_found="${#charts_found[@]}"
+          echo ""
+          echo "found a total of "$num_of_charts_found" charts"
+        fi
+
+        function join_by {
+          local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi;
+        }
+
+        comma_separated_charts_found=$(join_by , "${charts_found[@]}")
+        echo $comma_separated_charts_found
+
+        echo "::set-env name=comma_separated_charts_found::$comma_separated_charts_found"
     - name: Upgrade app version
       if: success()
       run: |
         PROJECT_NAME=${GITHUB_REPOSITORY##*/}
         ACCOUNT_OWNER=$(echo $GITHUB_REPOSITORY | cut -d/ -f1)
-        echo "comma_separated_services_found="$comma_separated_services_found
+        echo "comma_separated_charts_found="$comma_separated_charts_found
 
-        IFS=',' read -r -a services_found <<< "$comma_separated_services_found"
+        IFS=',' read -r -a charts_found <<< "$comma_separated_charts_found"
 
         echo "GITHUB_SHA="$GITHUB_SHA
 
@@ -154,7 +208,7 @@ jobs:
         appVersion: _APP_VERSION_
         EOL
 
-        for chart_name in "${services_found[@]}"
+        for chart_name in "${charts_found[@]}"
         do
           CHART_PATH=services/$chart_name/Chart.yaml
 
