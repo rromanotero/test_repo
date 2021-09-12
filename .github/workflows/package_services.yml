@@ -238,9 +238,9 @@ jobs:
 
         git add . && git commit -am "app upgrade to "$APP_VERSION
 
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        if: success()
-        with:
-          github_token: ${{ secrets.PERSONAL_TOKEN }}
-          branch: ${{ github.ref }} 
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      if: success()
+      with:
+        github_token: ${{ secrets.PERSONAL_TOKEN }}
+        branch: ${{ github.ref }}
