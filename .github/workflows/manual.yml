@@ -36,7 +36,7 @@ jobs:
       run: |
         BRANCH_NAME=${GITHUB_REF##*/}
         PROJECT_NAME=${GITHUB_REPOSITORY##*/}
-        ACCOUNT_USERNAME=${cut -d/ -f1}
+        ACCOUNT_USERNAME=$(echo $GITHUB_REPOSITORY | cut -d/ -f1)
 
         echo "TARGET_PLATFORM="$TARGET_PLATFORM
         echo "IMAGE_NAME="$IMAGE_NAME
