@@ -102,7 +102,15 @@ jobs:
         echo "GITHUB_REPOSITORY="$GITHUB_REPOSITORY
         echo "ACCOUNT_USERNAME="$ACCOUNT_USERNAME
         echo "PROJECT_NAME"=$PROJECT_NAME
-        echo "services_found="$services_found
+        echo "comma_separated_services_found="$comma_separated_services_found
+
+        comma_separated_services_found
+        IFS=',' read -r -a services_found <<< "$comma_separated_services_found"
+
+        for service_name in "${services_found[@]}"
+        do
+          echo $service_name
+        done > $OUTPUT_PATH
 
         # while read service_name; do
         #   IMAGE_NAME=$ACCOUNT_USERNAME'/'$PROJECT_NAME'_'$service_name
@@ -111,7 +119,7 @@ jobs:
         #   echo 'Publishing image '$IMAGE_NAME' from path '$SERVICE_PATH
         #   echo '-----------------------------------------'
         #
-        # done < $SERVICES_FOUND_FILE_PATH
+        # done < $services
 
 
         # cd services/light_sensor
