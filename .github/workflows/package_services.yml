@@ -117,8 +117,9 @@ jobs:
           cd ../..
         done
 
-  #################
-  #################
+  ####################################################################
+  ####################################################################
+  ####################################################################
 
   upgrade_helm_app_version:
     runs-on: ubuntu-latest
@@ -128,8 +129,6 @@ jobs:
       with:
         repository: ${{ github.repository }}_cd
         ref: ${{ github.ref }}
-        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
-        fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
     - name: Detect Charts
       if: success()
       env:
@@ -234,12 +233,7 @@ jobs:
         done
 
         git config --global hub.protocol https
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
 
-        git add . && git commit -m "app upgrade to "$APP_VERSION
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ github.token }}
-        branch: ${{ github.ref }}
+        git add . && git commit -am "app upgrade to "$APP_VERSION && git push origin
