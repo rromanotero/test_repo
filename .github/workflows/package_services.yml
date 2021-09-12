@@ -101,7 +101,8 @@ jobs:
 
         for service_name in "${services_found[@]}"
         do
-          IMAGE_NAME=$ACCOUNT_OWNER'/'$PROJECT_NAME'_'$service_name:$BRANCH_NAME-GITHUB_SHORT_SHA
+          IMAGE_VERSION=$BRANCH_NAME-$GITHUB_SHORT_SHA
+          IMAGE_NAME=$ACCOUNT_OWNER'/'$PROJECT_NAME'_'$service_name:$IMAGE_VERSION
           SERVICE_PATH=services/$service_name
           echo '----------------------------------------------------------'
           echo 'Publishing image '$IMAGE_NAME' from path '$SERVICE_PATH
