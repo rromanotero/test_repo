@@ -184,7 +184,7 @@ jobs:
     - name: Upgrade app version
       if: success()
       run: |
-        GITHUB_REPOSITORY_CHARTS=$GITHUB_REPOSITORY_cd
+        GITHUB_REPOSITORY_CHARTS=$GITHUB_REPOSITORY"_cd"
         PROJECT_NAME=${GITHUB_REPOSITORY_CHARTS##*/}
         ACCOUNT_OWNER=$(echo $GITHUB_REPOSITORY | cut -d/ -f1)
         BRANCH_NAME=${GITHUB_REF##*/}
