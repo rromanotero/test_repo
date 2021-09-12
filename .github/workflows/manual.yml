@@ -79,7 +79,7 @@ jobs:
           local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi;
         }
 
-        comma_separated_services_found=$(join_by , $services_found)
+        comma_separated_services_found=$(join_by , "${services_found[@]}")
         echo $comma_separated_services_found
 
         echo "::set-env name=comma_separated_services_found::$comma_separated_services_found"
