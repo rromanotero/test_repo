@@ -102,7 +102,7 @@ jobs:
           IMAGE_NAME=$ACCOUNT_OWNER'/'$PROJECT_NAME'_'$service_name:$BRANCH_NAME
           SERVICE_PATH=services/$service_name
           echo '----------------------------------------------------------'
-          echo 'Speeding up build
+          echo 'Speeding up build'
           echo '----------------------------------------------------------'
           docker pull $IMAGE_NAME || true
           echo '----------------------------------------------------------'
@@ -189,6 +189,7 @@ jobs:
         GITHUB_REPOSITORY_CHARTS=$GITHUB_REPOSITORY"_cd"
         BRANCH_NAME=${GITHUB_REF##*/}
         APP_VERSION=$BRANCH_NAME'-'$GITHUB_SHA
+        COMMIT_MSG=${{ github.event.head_commit.message }}
 
 
         IFS=',' read -r -a charts_found <<< "$comma_separated_charts_found"
@@ -197,6 +198,7 @@ jobs:
         echo "BRANCH_NAME="$BRANCH_NAME
         echo "GITHUB_SHA="$GITHUB_SHA
         echo "APP_VERSION="$APP_VERSION
+        echo "COMMIT_MSG="$COMMIT_MSG
 
         echo "comma_separated_charts_found="$comma_separated_charts_found
 
@@ -237,7 +239,7 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
 
-        git add . && git commit -am "app upgrade to "$APP_VERSION
+        git add . && git commit -am "app upgrade to "$APP_VERSION"("$COMMIT_MSG")"
 
     - name: Push changes
       uses: ad-m/github-push-action@master
