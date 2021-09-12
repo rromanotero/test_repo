@@ -116,14 +116,12 @@ jobs:
             --output type=image,push=true .
           cd ../..
         done
-  update_helm_app_version:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
+    - name: Checkout CD Repo
+      uses: actions/checkout@master
       with:
         repository: rromanotero/test_repo_cd
         ref: master
-    - name: Git edit
+    - name: Upgrade app version
       if: success()
       run: |
         PROJECT_NAME=${GITHUB_REPOSITORY##*/}
@@ -145,7 +143,7 @@ jobs:
         git config --global user.email $email
         git config --global user.name $username
 
-        CHART_TEMPLATE_PATH=$runner.temp/chart_template
+        CHART_TEMPLATE_PATH=./chart_template.yaml
         cat >$CHART_TEMPLATE_PATH<<EOL
         apiVersion: v2
         name: _APP_NAME_
