@@ -249,7 +249,8 @@ jobs:
         git config --global user.name "github-actions"
 
         set -x
-        git add . && git diff && git commit -m 'upgrade to '$APP_VERSION_SHORT'('"$COMMIT_MSG"')'
+        git add . && git commit -m 'upgrade to '$APP_VERSION_SHORT'('"$COMMIT_MSG"')'
+        git diff HEAD^ HEAD
 
     - name: Push changes
       uses: ad-m/github-push-action@master
