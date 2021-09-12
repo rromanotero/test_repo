@@ -39,6 +39,7 @@ jobs:
 
         echo "SERVICES_PATH="$SERVICES_PATH
         echo "OUTPUT_PATH="$OUTPUT_PATH
+        echo ""
 
         if [ ! -d $SERVICES_PATH ]; then
           echo "services directory missing: "$SERVICES_PATH
@@ -77,10 +78,9 @@ jobs:
         for service_name in "${services_found[@]}"
         do
           echo $service_name
-        done > $OUTPUT_PATH
+        done
 
-        cat $OUTPUT_PATH
-        #echo "::set-env name=FOO::$FOO"
+        echo "::set-env name=services_found::$services_found"
     - name: Run Buildx (push image)
       if: success()
       run: |
@@ -96,6 +96,7 @@ jobs:
         echo "GITHUB_REPOSITORY="$GITHUB_REPOSITORY
         echo "ACCOUNT_USERNAME="$ACCOUNT_USERNAME
         echo "PROJECT_NAME"=$PROJECT_NAME
+        echo "services_found="$services_found
 
         # while read service_name; do
         #   IMAGE_NAME=$ACCOUNT_USERNAME'/'$PROJECT_NAME'_'$service_name
