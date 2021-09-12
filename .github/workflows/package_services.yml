@@ -2,8 +2,6 @@
 
 name: Package Services
 
-# Controls when the action will run. Workflow runs when manually triggered using the UI
-# or API.
 on:
   push:
 
@@ -121,6 +119,7 @@ jobs:
 
   upgrade_app_version:
     runs-on: ubuntu-latest
+    needs: [build_and_publish]
     steps:
     - name: Checkout Helm Chart repo
       uses: actions/checkout@v2
