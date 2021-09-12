@@ -112,11 +112,11 @@ jobs:
           echo '----------------------------------------------------------'
           echo 'Publishing image '$IMAGE_NAME' from path '$SERVICE_PATH
           echo '----------------------------------------------------------'
-          cd $service_name
+          cd services/$service_name
           docker buildx build \
             --platform  $TARGET_PLATFORM \
             --tag $IMAGE_NAME \
             --file ./Dockerfile \
             --output type=image,push=true .
-          cd ..
+          cd ../..
         done
