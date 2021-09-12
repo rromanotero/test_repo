@@ -190,14 +190,18 @@ jobs:
       run: |
         GITHUB_REPOSITORY_CHARTS=$GITHUB_REPOSITORY"_cd"
         BRANCH_NAME=${GITHUB_REF##*/}
+        GITHUB_SHORT_SHA=$(echo ${GITHUB_SHA:0:7})
         APP_VERSION=$BRANCH_NAME'-'$GITHUB_SHA
+        APP_VERSION_SHORT=$BRANCH_NAME'-'$GITHUB_SHORT_SHA
 
         IFS=',' read -r -a charts_found <<< "$comma_separated_charts_found"
 
         echo "GITHUB_REPOSITORY_CHARTS="$GITHUB_REPOSITORY_CHARTS
         echo "BRANCH_NAME="$BRANCH_NAME
         echo "GITHUB_SHA="$GITHUB_SHA
+        echo "GITHUB_SHORT_SHA="$GITHUB_SHORT_SHA
         echo "APP_VERSION="$APP_VERSION
+        echo "APP_VERSION_SHORT="$APP_VERSION_SHORT
         echo "COMMIT_MSG="$COMMIT_MSG
 
         echo "comma_separated_charts_found="$comma_separated_charts_found
@@ -236,10 +240,10 @@ jobs:
         done
 
         git config --global hub.protocol https
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions@noreply.github.com"
+        git config --global user.name "github-actions"
 
-        git add . && git commit -am "app upgrade to "$APP_VERSION"("$COMMIT_MSG")"
+        git add . && git commit -am $APP_VERSION_SHORT"("$COMMIT_MSG")"
 
     - name: Push changes
       uses: ad-m/github-push-action@master
