@@ -36,10 +36,7 @@ jobs:
         ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       run: |
         SERVICES_PATH=./services
-        OUTPUT_PATH=$runner.temp
-
         echo "SERVICES_PATH="$SERVICES_PATH
-        echo "OUTPUT_PATH="$OUTPUT_PATH
         echo ""
 
         if [ ! -d $SERVICES_PATH ]; then
@@ -129,4 +126,55 @@ jobs:
     - name: Git edit
       if: success()
       run: |
-        ls 
+        PROJECT_NAME=${GITHUB_REPOSITORY##*/}
+        ACCOUNT_OWNER=$(echo $GITHUB_REPOSITORY | cut -d/ -f1)
+        echo "comma_separated_services_found="$comma_separated_services_found
+
+        IFS=',' read -r -a services_found <<< "$comma_separated_services_found"
+
+        echo "GITHUB_SHA="$GITHUB_SHA
+
+        email="rromanotero@gmail.com"
+        username="ci-system"
+        owner=$ACCOUNT_OWNER
+        repo=$PROJECT_NAME
+
+        token=$GITHUB_TOKEN
+
+        git config --global hub.protocol https
+        git config --global user.email $email
+        git config --global user.name $username
+
+        CHART_TEMPLATE_PATH=$runner.temp/chart_template
+        cat >$CHART_TEMPLATE_PATH<<EOL
+        apiVersion: v2
+        name: _APP_NAME_
+        description: A Helm chart for Kubernetes
+
+        type: application
+        version: 1.0.0
+        appVersion: _APP_VERSION_
+        EOL
+
+        for chart_name in "${services_found[@]}"
+        do
+          CHART_PATH=services/$chart_name/Chart.yaml
+
+          echo '--------------------------------'
+          echo 'Upgrading app '$chart_name
+
+          APP_NAME=$(echo "$chart_name" | tr '_' '-')
+          APP_VERSION=$BRANCH_NAME'-'$GITHUB_SHA
+
+          cp $CHART_TEMPLATE_PATH $CHART_PATH
+
+          sed -i "s|_APP_NAME_|$APP_NAME|g" $CHART_PATH
+          sed -i "s|_APP_VERSION_|$APP_VERSION|g" $CHART_PATH
+
+          echo '|||| chart contents ||||'
+          cat $CHART_PATH
+          echo '|||| chart contents ||||'
+          echo '--------------------------------'
+        done
+
+        cd $PROJECT_NAME && git add . && git commit -m "app upgrade" && git push origin && cd ..
