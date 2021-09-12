@@ -124,5 +124,8 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
-        name: $GITHUB_REPOSITORY
+        repository: $GITHUB_REPOSITORY
         ref: $GITHUB_REF
+    - name: Git edit
+      if: success()
+      run: |
