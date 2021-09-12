@@ -31,6 +31,56 @@ jobs:
       if: success()
       run: |
         echo "${DOCKER_PASSWORD}" | docker login ${DOCKER_REGISTRY} --username "${DOCKER_USERNAME}" --password-stdin
+    - name: Detect Services
+      if: success()
+      run: |
+        SERVICES_PATH=./services
+        OUTPUT_PATH=$runner.temp
+
+        echo "SERVICES_PATH="$SERVICES_PATH
+        echo "OUTPUT_PATH="$OUTPUT_PATH
+
+        if [ ! -d $SERVICES_PATH ]; then
+          echo "services directory missing: "$SERVICES_PATH
+          exit 1
+        fi
+
+        services_found=()
+        for path in $SERVICES_PATH/*; do
+          if [[ -d $path ]]; then
+            SERVICE_NAME=$(basename $path)
+            SVC_PATH=$SERVICES_PATH/$SERVICE_NAME
+
+            echo "Checking $SVC_PATH"
+
+            if [ ! -f $SVC_PATH/Procfile ]; then
+              echo "service $SERVICE_NAME is missing its Procfile"
+              echo "here's the contents of $SVC_PATH"
+              ls -l $SVC_PATH
+              exit 1
+            fi
+
+            echo "found service "$SERVICE_NAME
+            services_found+=("$SERVICE_NAME")
+          fi
+        done
+
+        if [ ${#services_found[@]} -eq 0 ]; then
+          echo "no services found in ./services"
+          exit 1
+        else
+          num_of_services_found="${#services_found[@]}"
+          echo ""
+          echo "found a total of "$num_of_services_found" services"
+        fi
+
+        for service_name in "${services_found[@]}"
+        do
+          echo $service_name
+        done > $OUTPUT_PATH
+
+        cat $OUTPUT_PATH
+        #echo "::set-env name=FOO::$FOO"
     - name: Run Buildx (push image)
       if: success()
       run: |
@@ -46,6 +96,15 @@ jobs:
         echo "GITHUB_REPOSITORY="$GITHUB_REPOSITORY
         echo "ACCOUNT_USERNAME="$ACCOUNT_USERNAME
         echo "PROJECT_NAME"=$PROJECT_NAME
+
+        # while read service_name; do
+        #   IMAGE_NAME=$ACCOUNT_USERNAME'/'$PROJECT_NAME'_'$service_name
+        #   SERVICE_PATH=services/$service_name
+        #   echo '-----------------------------------------'
+        #   echo 'Publishing image '$IMAGE_NAME' from path '$SERVICE_PATH
+        #   echo '-----------------------------------------'
+        #
+        # done < $SERVICES_FOUND_FILE_PATH
 
 
         # cd services/light_sensor
