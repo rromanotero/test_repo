@@ -185,11 +185,20 @@ jobs:
         GITHUB_REPOSITORY_CHARTS=$GITHUB_REPOSITORY_cd
         PROJECT_NAME=${GITHUB_REPOSITORY_CHARTS##*/}
         ACCOUNT_OWNER=$(echo $GITHUB_REPOSITORY | cut -d/ -f1)
-        echo "comma_separated_charts_found="$comma_separated_charts_found
+        BRANCH_NAME=${GITHUB_REF##*/}
+        APP_VERSION=$BRANCH_NAME'-'$GITHUB_SHA
+
 
         IFS=',' read -r -a charts_found <<< "$comma_separated_charts_found"
 
+        echo "GITHUB_REPOSITORY_CHARTS="$GITHUB_REPOSITORY_CHARTS
+        echo "PROJECT_NAME="$PROJECT_NAME
+        echo "ACCOUNT_OWNER="$ACCOUNT_OWNER
+        echo "BRANCH_NAME="$BRANCH_NAME
         echo "GITHUB_SHA="$GITHUB_SHA
+        echo "APP_VERSION="$APP_VERSION
+
+        echo "comma_separated_charts_found="$comma_separated_charts_found
 
         email="rromanotero@gmail.com"
         username="ci-system"
@@ -223,7 +232,6 @@ jobs:
           echo 'Upgrading app '$chart_name
 
           APP_NAME=$(echo "$chart_name" | tr '_' '-')
-          APP_VERSION=$BRANCH_NAME'-'$GITHUB_SHA
 
           cp $CHART_TEMPLATE_PATH $CHART_PATH
 
@@ -235,6 +243,5 @@ jobs:
           echo '|||| chart contents ||||'
           echo '--------------------------------'
         done
-        ls
 
-        cd $PROJECT_NAME && git add . && git commit -m "app upgrade" && git push origin && cd ..
+        git add . && git commit -m "app upgrade to "$APP_VERSION && git push origin
