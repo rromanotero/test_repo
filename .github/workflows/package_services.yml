@@ -223,9 +223,10 @@ jobs:
 
           echo '--------------------------------'
           echo 'Upgrade tag in values.yaml ('"$chart_name"')'
+
           ORIGINAL_TAG_LINE=$(grep -F "tag:" $VALUES_YAML_PATH)
           NEW_TAG_LINE='tag: '$APP_VERSION_SHORT
-          sed -i "s|$ORIGINAL_TAG_LINE|$NEW_TAG_LINE|g" $VALUES_YAML_PATH
+          sed -i "s|[[:blank:]]$ORIGINAL_TAG_LINE|$NEW_TAG_LINE|g" $VALUES_YAML_PATH
 
 
           echo 'Upgrade app version ('"$chart_name"')'
