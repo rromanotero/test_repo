@@ -17,8 +17,6 @@ jobs:
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       TARGET_PLATFORM: linux/arm/v7
 
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - name: Checkout the code
       uses: actions/checkout@v1
@@ -121,7 +119,7 @@ jobs:
   ####################################################################
   ####################################################################
 
-  upgrade_helm_app_version:
+  upgrade_app_version:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Helm Chart repo
@@ -182,7 +180,7 @@ jobs:
         echo $comma_separated_charts_found
 
         echo "::set-env name=comma_separated_charts_found::$comma_separated_charts_found"
-    - name: Upgrade app version
+    - name: Upgrade Helm app version
       if: success()
       run: |
         GITHUB_REPOSITORY_CHARTS=$GITHUB_REPOSITORY"_cd"
@@ -242,5 +240,6 @@ jobs:
       uses: ad-m/github-push-action@master
       if: success()
       with:
+        repository: ${{ github.repository }}_cd
         github_token: ${{ secrets.PERSONAL_TOKEN }}
         branch: ${{ github.ref }}
