@@ -1,11 +1,13 @@
 from flask import Flask, jsonify
 import os
+import sys
 
 app = Flask(__name__)
 
 @app.route("/")
 def salute():
-    print("I'm light sensor v2")
+    print("I'm light sensor v3 (stdout)")
+    print("I'm light sensor v3 (stderr)", file=sys.stderr)
     return jsonify({
         "server_status" : 'OKKKAAAAAYYY (light sensor)'
         })
