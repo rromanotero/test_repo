@@ -125,7 +125,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Helm Chart repo
-      uses: actions/checkout@master
+      uses: actions/checkout@v2
       with:
         repository: ${{ github.repository }}_cd
         ref: ${{ github.ref }}
@@ -233,8 +233,12 @@ jobs:
           echo '--------------------------------'
         done
 
+        username="github-actions[bot]"
+
         git config --global hub.protocol https
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
+        git config --global user.name $username
 
-        git add . && git commit -am "app upgrade to "$APP_VERSION && git push origin
+        git add .
+        git commit -am "app upgrade to "$APP_VERSION
+        git push https://$username:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY_CHARTS.git
