@@ -6,8 +6,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def salute():
-    print("I'm light sensor v3 (stdout)")
-    print("I'm light sensor v3 (stderr)", file=sys.stderr)
+    print("I'm light sensor v4 (stdout)")
+    print("I'm light sensor v4 (stderr)", file=sys.stderr)
     return jsonify({
         "server_status" : 'OKKKAAAAAYYY (light sensor)'
         })
