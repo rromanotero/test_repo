@@ -127,6 +127,8 @@ jobs:
     - name: Checkout Helm Chart repo
       uses: actions/checkout@v2
       with:
+        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+        fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
         repository: ${{ github.repository }}_cd
         ref: ${{ github.ref }}
     - name: Detect Charts
@@ -182,12 +184,8 @@ jobs:
         echo "::set-env name=comma_separated_charts_found::$comma_separated_charts_found"
     - name: Upgrade app version
       if: success()
-      env:
-        GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
       run: |
         GITHUB_REPOSITORY_CHARTS=$GITHUB_REPOSITORY"_cd"
-        PROJECT_NAME=${GITHUB_REPOSITORY_CHARTS##*/}
-        ACCOUNT_OWNER=$(echo $GITHUB_REPOSITORY | cut -d/ -f1)
         BRANCH_NAME=${GITHUB_REF##*/}
         APP_VERSION=$BRANCH_NAME'-'$GITHUB_SHA
 
@@ -234,12 +232,15 @@ jobs:
           echo '--------------------------------'
         done
 
-        username="github-actions[bot]"
-
         git config --global hub.protocol https
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git config --global user.name $username
+        git config --global user.name "github-actions[bot]"
 
-        git add .
-        git commit -am "app upgrade to "$APP_VERSION
-        git push https://$username:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY_CHARTS.git
+        git add . && git commit -am "app upgrade to "$APP_VERSION
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        if: success()
+        with:
+          github_token: ${{ secrets.PERSONAL_TOKEN }}
+          branch: ${{ github.ref }}
