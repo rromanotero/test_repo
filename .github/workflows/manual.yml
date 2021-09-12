@@ -109,7 +109,7 @@ jobs:
         for service_name in "${services_found[@]}"
         do
           echo $service_name
-        done > $OUTPUT_PATH
+        done
 
         # while read service_name; do
         #   IMAGE_NAME=$ACCOUNT_USERNAME'/'$PROJECT_NAME'_'$service_name
