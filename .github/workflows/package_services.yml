@@ -185,12 +185,12 @@ jobs:
         echo "::set-env name=comma_separated_charts_found::$comma_separated_charts_found"
     - name: Upgrade Helm app version
       if: success()
+      env:
+        COMMIT_MSG: ${{ github.event.head_commit.message }}
       run: |
         GITHUB_REPOSITORY_CHARTS=$GITHUB_REPOSITORY"_cd"
         BRANCH_NAME=${GITHUB_REF##*/}
         APP_VERSION=$BRANCH_NAME'-'$GITHUB_SHA
-        COMMIT_MSG=${{ github.event.head_commit.message }}
-
 
         IFS=',' read -r -a charts_found <<< "$comma_separated_charts_found"
 
