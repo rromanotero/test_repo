@@ -104,7 +104,6 @@ jobs:
         echo "PROJECT_NAME"=$PROJECT_NAME
         echo "comma_separated_services_found="$comma_separated_services_found
 
-        comma_separated_services_found
         IFS=',' read -r -a services_found <<< "$comma_separated_services_found"
 
         for service_name in "${services_found[@]}"
