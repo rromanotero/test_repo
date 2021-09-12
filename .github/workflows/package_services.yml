@@ -116,14 +116,18 @@ jobs:
             --output type=image,push=true .
           cd ../..
         done
+
+  #################
+  #################
+
   upgrade_helm_app_version:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Helm Chart repo
       uses: actions/checkout@master
       with:
-        repository: rromanotero/test_repo_cd
-        ref: master
+        repository: ${{ github.repository }}_cd
+        ref: ${{ github.ref }}
     - name: Detect Charts
       if: success()
       env:
@@ -178,7 +182,8 @@ jobs:
     - name: Upgrade app version
       if: success()
       run: |
-        PROJECT_NAME=${GITHUB_REPOSITORY##*/}
+        GITHUB_REPOSITORY_CHARTS=$GITHUB_REPOSITORY_cd
+        PROJECT_NAME=${GITHUB_REPOSITORY_CHARTS##*/}
         ACCOUNT_OWNER=$(echo $GITHUB_REPOSITORY | cut -d/ -f1)
         echo "comma_separated_charts_found="$comma_separated_charts_found
 
@@ -210,6 +215,8 @@ jobs:
 
         for chart_name in "${charts_found[@]}"
         do
+          sleep 1 ## so logs are not as out of order
+
           CHART_PATH=services/$chart_name/Chart.yaml
 
           echo '--------------------------------'
@@ -228,5 +235,6 @@ jobs:
           echo '|||| chart contents ||||'
           echo '--------------------------------'
         done
+        ls
 
         cd $PROJECT_NAME && git add . && git commit -m "app upgrade" && git push origin && cd ..
