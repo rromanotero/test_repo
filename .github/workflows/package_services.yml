@@ -128,6 +128,8 @@ jobs:
       with:
         repository: ${{ github.repository }}_cd
         ref: ${{ github.ref }}
+        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+        fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
     - name: Detect Charts
       if: success()
       env:
@@ -198,7 +200,7 @@ jobs:
 
         echo "comma_separated_charts_found="$comma_separated_charts_found
 
-        CHART_TEMPLATE_PATH=./chart_template.yaml
+        CHART_TEMPLATE_PATH=../chart_template.yaml
         cat >$CHART_TEMPLATE_PATH<<EOL
         apiVersion: v2
         name: _APP_NAME_
