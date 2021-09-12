@@ -28,17 +28,13 @@ jobs:
       uses: crazy-max/ghaction-docker-buildx@v1
       with:
         version: latest
-    - name: Extract branch name
-      shell: bash
-      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-      id: extract_branch
     - name: Prepare
       if: success()
       id: prepare
       run: |
         echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}
         echo ::set-output name=docker_image::${DOCKER_REGISTRY}/${DOCKER_IMAGE}
-        echo ::set-output name=version::{{ steps.extract_branch.outputs.branch }}
+        echo ::set-output name=version::master
     - name: Docker Login
       if: success()
       run: |
