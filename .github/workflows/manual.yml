@@ -33,7 +33,7 @@ jobs:
       id: prepare
       run: |
         echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}
-        echo ::set-output name=docker_image::${DOCKER_REGISTRY}/${DOCKER_IMAGE}
+        echo ::set-output name=docker_image::${DOCKER_IMAGE}
         echo ::set-output name=version::master
     - name: Docker Login
       if: success()
