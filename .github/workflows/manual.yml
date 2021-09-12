@@ -46,5 +46,15 @@ jobs:
     - name: Run Buildx (push image)
       if: success()
       run: |
+        PLATFORM=${{ steps.prepare.outputs.docker_platform }}
+        IMAGE=${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }}
+
+        echo "PLATFORM="$PLATFORM
+        echo "IMAGE="$IMAGE
+
         cd services/light_sensor
-        docker buildx build --platform ${{ steps.prepare.outputs.docker_platform }} --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} --output type=image,push=true .
+        docker buildx build \
+          --platform  $PLATFORM \
+          --tag $IMAGE \
+          --file ./Dockerfile \
+          --output type=image,push=true .
