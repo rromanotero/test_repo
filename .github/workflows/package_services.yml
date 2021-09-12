@@ -124,8 +124,9 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
-        repository: $GITHUB_REPOSITORY
-        ref: $GITHUB_REF
+        repository: rromanotero/test_repo_cd
+        ref: master
     - name: Git edit
       if: success()
       run: |
+        ls 
