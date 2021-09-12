@@ -95,7 +95,6 @@ jobs:
         ACCOUNT_USERNAME=$(echo $GITHUB_REPOSITORY | cut -d/ -f1)
 
         echo "TARGET_PLATFORM="$TARGET_PLATFORM
-        echo "IMAGE_NAME="$IMAGE_NAME
         echo "GITHUB_REF="$GITHUB_REF
         echo "BRANCH_NAME="$BRANCH_NAME
         echo "GITHUB_SHA="$GITHUB_SHA
@@ -113,17 +112,9 @@ jobs:
           echo '-----------------------------------------'
           echo 'Publishing image '$IMAGE_NAME' from path '$SERVICE_PATH
           echo '-----------------------------------------'
+          docker buildx build \
+            --platform  $TARGET_PLATFORM \
+            --tag $IMAGE_NAME:$BRANCH_NAME \
+            --file ./Dockerfile \
+            --output type=image,push=true .
         done
-
-        # while read service_name; do
-        #
-        # done < $services
-
-
-        # cd services/light_sensor
-        #
-        # docker buildx build \
-        #   --platform  $DOCKER_TARGET_PLATFORM \
-        #   --tag $DOCKER_IMAGE \
-        #   --file ./Dockerfile \
-        #   --output type=image,push=true .
