@@ -15,7 +15,7 @@ RUN apt-get -y update \
   && pip3 install adafruit-circuitpython-rfm69 \
   && rm -rf /var/lib/apt/lists/* \
   && apt-get clean \
-  && apt-clean
+  && apt clean
 
 #Install reqs
 COPY requirements /app
