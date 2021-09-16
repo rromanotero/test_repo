@@ -94,4 +94,4 @@ while not exit:
         exit = True
 
     display.show()
-    time.sleep(0.1)
+    time.sleep(0.1) 
