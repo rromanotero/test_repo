@@ -4,9 +4,13 @@ RUN mkdir /app
 RUN mkdir /tests
 
 #Install Circuit Python Libraries
-RUN pip3 install adafruit-circuitpython-ssd1306 \
-    && pip3 install adafruit-circuitpython-framebuf \
-    && pip3 install adafruit-circuitpython-rfm69
+RUN apt-get -y update \
+  && apt-get -y install python3-dev python3-rpi.gpio \
+  && pip3 install adafruit-circuitpython-ssd1306 \
+  && pip3 install adafruit-circuitpython-framebuf \
+  && pip3 install adafruit-circuitpython-rfm69 \
+  && rm -rf /var/lib/apt/lists/* \
+  && apt-get -y clean
 
 #Install reqs
 COPY requirements /app
