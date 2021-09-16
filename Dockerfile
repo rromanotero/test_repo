@@ -22,8 +22,8 @@ COPY requirements /app
 RUN python3 -m pip install -r /app/requirements
 
 #Copy src and test
-COPY /src /app
-COPY /tests /tests
+COPY src /app
+COPY tests /tests
 
 EXPOSE 5000
 
