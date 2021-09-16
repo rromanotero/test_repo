@@ -6,7 +6,7 @@ RUN mkdir /tests
 #Install Circuit Python Libraries
 RUN apt-get -y update \
   && apt -y update \
-  && apt-get -y install python3-dev python3-rpi.gpio \
+  && apt-get -y install python3-dev \
   && python3 -m pip install --upgrade pip setuptools wheel \
   && apt -y install build-essential \
   && pip3 install RPi.GPIO \
