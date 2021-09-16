@@ -22,13 +22,6 @@ jobs:
       uses: crazy-max/ghaction-docker-buildx@v1
       with:
         version: latest
-    - name: Cache Docker layers
-      uses: actions/cache@v2
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
     - name: Docker Login
       if: success()
       run: |
@@ -42,12 +35,6 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: rromanotero/test_repo_light_sensor:master
-        cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: mode=max,type=local,dest=/tmp/.buildx-cache-new
-    - name: Move cache
-      run: |
-        rm -rf /tmp/.buildx-cache
-        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
     # - name: Run Buildx (push image)
     #   if: success()
