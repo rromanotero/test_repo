@@ -19,7 +19,7 @@ Wiring Check, Pi Radio w/RFM69
 
 Learn Guide: https://learn.adafruit.com/lora-and-lorawan-for-raspberry-pi
 Author: Brent Rubell for Adafruit Industries
-"""
+""" 
 import time
 import busio
 from digitalio import DigitalInOut, Direction, Pull
@@ -94,4 +94,4 @@ while not exit:
         exit = True
 
     display.show()
-    time.sleep(0.1) 
+    time.sleep(0.1)
