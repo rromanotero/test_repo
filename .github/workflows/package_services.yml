@@ -39,9 +39,8 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        repository: rromanotero/test_repo_light_sensor
-        tag_with_ref: true
-        platform: linux/arm/v7
+        platforms: linux/arm/v7
+        tags: rromanotero/test_repo_light_sensor:master
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: mode=max,type=local,dest=/tmp/.buildx-cache-new
     - name: Move cache
