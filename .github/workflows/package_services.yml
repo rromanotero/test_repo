@@ -115,7 +115,7 @@ jobs:
           cd services/$service_name
           docker buildx build \
             --cache-from type=local,src=/tmp/.buildx-cache \
-            --cache-to mode=max,type=local,dest=/tmp/.buildx-cache, \
+            --cache-to mode=max,type=local,dest=/tmp/.buildx-cache \
             --platform  $TARGET_PLATFORM \
             --tag $IMAGE_NAME \
             --file ./Dockerfile \
