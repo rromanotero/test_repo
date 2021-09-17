@@ -68,17 +68,22 @@ jobs:
         COMMIT_MSG: ${{ github.event.head_commit.message }}
       run: |
         BRANCH_NAME=${GITHUB_REF##*/}
+        GITHUB_SHORT_SHA=$(echo ${GITHUB_SHA:0:7})
         APP_VERSION=$BRANCH_NAME'-'$GITHUB_SHA
+        APP_VERSION_SHORT=$BRANCH_NAME'-'$GITHUB_SHORT_SHA
         GITHUB_REPOSITORY_LASTNAME=${GITHUB_REPOSITORY##*/}
         HELM_CHART_NAME=$(echo "$GITHUB_REPOSITORY_LASTNAME" | tr '_' '-')
 
+
         echo "GITHUB_REPOSITORY="$GITHUB_REPOSITORY
         echo "GITHUB_REPOSITORY_LASTNAME="$GITHUB_REPOSITORY_LASTNAME
-        echo "HELM_CHART_NAME="$HELM_CHART_NAME
         echo "BRANCH_NAME="$BRANCH_NAME
         echo "GITHUB_SHA="$GITHUB_SHA
+        echo "GITHUB_SHORT_SHA="$GITHUB_SHORT_SHA
         echo "APP_VERSION="$APP_VERSION
+        echo "APP_VERSION_SHORT="$APP_VERSION_SHORT
         echo "COMMIT_MSG="$COMMIT_MSG
+        echo "HELM_CHART_NAME="$HELM_CHART_NAME
 
         ls -l
 
@@ -117,7 +122,7 @@ jobs:
         git config --global user.name "ci"
 
         set -x
-        git add . && git commit -m 'upgrade to '$APP_VERSION'('"$COMMIT_MSG"')'
+        git add . && git commit -m 'upgrade to '$APP_VERSION_SHORT'('"$COMMIT_MSG"')'
         git diff HEAD^ HEAD
 
     - name: Push changes
