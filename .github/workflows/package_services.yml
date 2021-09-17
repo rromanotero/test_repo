@@ -42,7 +42,7 @@ jobs:
         file: ./Dockerfile
         push: true
         platforms: linux/arm/v7
-        tags: ${{github.repository}}:{{env.BRANCH}}-${{github.sha}}
+        tags: ${{github.repository}}:${{env.BRANCH}}-${{github.sha}}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: mode=max,type=local,dest=/tmp/.buildx-cache-new
     - name: Move cache
