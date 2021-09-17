@@ -44,7 +44,7 @@ def health_check():
     print("Hey there, this is STDERR", file=sys.stderr)
 
     display.fill(0) # Draw a black filled box to clear the image.
-    display.text('Server Up (v2)', width-85, height-7, 1)
+    display.text('Server Up (v3)', width-85, height-7, 1)
     display.show()
 
     return jsonify({
