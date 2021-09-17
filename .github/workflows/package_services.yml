@@ -78,24 +78,29 @@ jobs:
         echo "APP_VERSION="$APP_VERSION
         echo "COMMIT_MSG="$COMMIT_MSG
 
+        ls -l
+
         echo '---'
         echo 'Set image repository (values.yaml)'
 
         ORIGINAL_IMAGE_REPO_LINE=$(grep -F "repository:" chart/values.yaml)
         NEW_IMAGE_REPO_LINE='repository: '$GITHUB_REPOSITORY
         sed -i "s|$ORIGINAL_IMAGE_REPO_LINE|  $NEW_IMAGE_REPO_LINE|g" chart/values.yaml
+        sleep 0.2 #so logs don't come out of order
 
         echo 'Upgrade image tag (values.yaml)'
 
         ORIGINAL_TAG_LINE=$(grep -F "tag:" chart/values.yaml)
         NEW_TAG_LINE='tag: '$APP_VERSION
         sed -i "s|$ORIGINAL_TAG_LINE|  $NEW_TAG_LINE|g" chart/values.yaml
+        sleep 0.2
 
         echo 'Set chart name (Chart.yaml)'
 
         ORIGINAL_NAME=$(grep -F "name:" chart/Chart.yaml)
         NEW_NAME='name: '$GITHUB_REPOSITORY_LASTNAME
         sed -i "s|$ORIGINAL_NAME|  $NEW_NAME|g" chart/Chart.yaml
+        sleep 0.2
 
         echo 'Upgrade app version (Chart.yaml)'
 
@@ -103,8 +108,9 @@ jobs:
         NEW_VERSION_LINE='appVersion: '$APP_VERSION
         sed -i "s|$ORIGINAL_VERSION_LINE|  $NEW_VERSION_LINE|g" chart/Chart.yaml
 
-        sed -i "s|_APP_NAME_|$APP_NAME|g" $CHART_PATH
-        sed -i "s|_APP_VERSION_|$APP_VERSION|g" $CHART_PATH
+        sed -i "s|_APP_NAME_|$APP_NAME|g" chart/Chart.yaml
+        sed -i "s|_APP_VERSION_|$APP_VERSION|g" chart/Chart.yaml
+        sleep 0.2
         echo '---'
 
         git config --global hub.protocol https
