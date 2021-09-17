@@ -26,5 +26,6 @@ COPY src /app
 COPY tests /tests
 
 EXPOSE 5000
+WORKDIR "/app"
 
-CMD [ "cd app && python3 app.py" ]
+CMD [ "python3", "app.py" ]
