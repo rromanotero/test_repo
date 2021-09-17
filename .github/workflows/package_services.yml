@@ -70,9 +70,11 @@ jobs:
         BRANCH_NAME=${GITHUB_REF##*/}
         APP_VERSION=$BRANCH_NAME'-'$GITHUB_SHA
         GITHUB_REPOSITORY_LASTNAME=${GITHUB_REPOSITORY##*/}
+        HELM_CHART_NAME=$(echo "$GITHUB_REPOSITORY_LASTNAME" | tr '_' '-')
 
         echo "GITHUB_REPOSITORY="$GITHUB_REPOSITORY
         echo "GITHUB_REPOSITORY_LASTNAME="$GITHUB_REPOSITORY_LASTNAME
+        echo "HELM_CHART_NAME="$HELM_CHART_NAME
         echo "BRANCH_NAME="$BRANCH_NAME
         echo "GITHUB_SHA="$GITHUB_SHA
         echo "APP_VERSION="$APP_VERSION
@@ -98,7 +100,7 @@ jobs:
         echo 'Set chart name (Chart.yaml)'
 
         ORIGINAL_NAME=$(grep -F "name:" chart/Chart.yaml)
-        NEW_NAME='name: '$GITHUB_REPOSITORY_LASTNAME
+        NEW_NAME='name: '$HELM_CHART_NAME
         sed -i "s|$ORIGINAL_NAME|$NEW_NAME|g" chart/Chart.yaml
         sleep 0.2
 
