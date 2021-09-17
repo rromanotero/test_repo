@@ -2,9 +2,6 @@ from flask import Flask, jsonify
 import os
 import sys
 import time
-
-os.system('ls -l /dev/')
-
 import busio
 from digitalio import DigitalInOut, Direction, Pull
 import board
@@ -47,7 +44,7 @@ def health_check():
     print("Hey there, this is STDERR", file=sys.stderr)
 
     display.fill(0) # Draw a black filled box to clear the image.
-    display.text('Server Up', width-85, height-7, 1)
+    display.text('Server Up (v2)', width-85, height-7, 1)
     display.show()
 
     return jsonify({
