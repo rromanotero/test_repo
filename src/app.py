@@ -1,25 +1,6 @@
-# from flask import Flask, jsonify
-# import os
-# import sys
-#
-# app = Flask(__name__)
-#
-# @app.route("/")
-# def salute():
-#     print("I'm light sensor v4 (stdout)")
-#     print("I'm light sensor v4 (stderr)", file=sys.stderr)
-#     return jsonify({
-#         "server_status" : 'OKKKAAAAAYYY (light sensor)'
-#         })
-#
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0', debug=True)
-"""
-Wiring Check, Pi Radio w/RFM69
-
-Learn Guide: https://learn.adafruit.com/lora-and-lorawan-for-raspberry-pi
-Author: Brent Rubell for Adafruit Industries
-""" 
+from flask import Flask, jsonify
+import os
+import sys
 import time
 import busio
 from digitalio import DigitalInOut, Direction, Pull
@@ -28,21 +9,6 @@ import board
 import adafruit_ssd1306
 # Import the RFM69 radio module.
 import adafruit_rfm69
-
-# Button A
-btnA = DigitalInOut(board.D5)
-btnA.direction = Direction.INPUT
-btnA.pull = Pull.UP
-
-# Button B
-btnB = DigitalInOut(board.D6)
-btnB.direction = Direction.INPUT
-btnB.pull = Pull.UP
-
-# Button C
-btnC = DigitalInOut(board.D12)
-btnC.direction = Direction.INPUT
-btnC.pull = Pull.UP
 
 # Create the I2C interface.
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -56,42 +22,34 @@ display.show()
 width = display.width
 height = display.height
 
-
 # RFM69 Configuration
 CS = DigitalInOut(board.CE1)
 RESET = DigitalInOut(board.D25)
 spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
 
-exit = False
-while not exit:
-    # Draw a black filled box to clear the image.
-    display.fill(0)
+# Attempt to set up the RFM69 Module
+try:
+    rfm69 = adafruit_rfm69.RFM69(spi, CS, RESET, 915.0)
+    display.text('RFM69: Detected', 0, 0, 1)
+except RuntimeError as error:
+    # Thrown on version mismatch
+    display.text('RFM69: ERROR', 0, 0, 1)
+    print('RFM69 Error: ', error)
 
-    # Attempt to set up the RFM69 Module
-    try:
-        rfm69 = adafruit_rfm69.RFM69(spi, CS, RESET, 915.0)
-        display.text('RFM69: Detected', 0, 0, 1)
-    except RuntimeError as error:
-        # Thrown on version mismatch
-        display.text('RFM69: ERROR', 0, 0, 1)
-        print('RFM69 Error: ', error)
+app = Flask(__name__)
 
-    # Check buttons
-    if not btnA.value:
-        # Button A Pressed
-        display.text('Ada', width-85, height-7, 1)
-        display.show()
-        time.sleep(0.1)
-    if not btnB.value:
-        # Button B Pressed
-        display.text('Fruit', width-75, height-7, 1)
-        display.show()
-        time.sleep(0.1)
-    if not btnC.value:
-        # Button C Pressed
-        display.text('Bye now', width-65, height-7, 1)
-        display.show()
-        exit = True
+@app.route("/")
+def health_check():
+    print("Hey there, this is STDOUT")
+    print("Hey there, this is STDERR", file=sys.stderr)
 
+    display.fill(0) # Draw a black filled box to clear the image.
+    display.text('Server Up', width-85, height-7, 1)
     display.show()
-    time.sleep(0.1)
+
+    return jsonify({
+        "server_status" : 'OKKKAAAAAYYY'
+        })
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=True)

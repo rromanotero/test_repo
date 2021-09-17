@@ -27,4 +27,4 @@ COPY tests /tests
 
 EXPOSE 5000
 
-CMD [ "python3", "app/app.py" ]
+CMD [ "cd app && python3 app.py" ]

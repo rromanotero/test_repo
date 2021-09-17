@@ -31,7 +31,6 @@ jobs:
       if: success()
       run: |
         echo "${DOCKER_PASSWORD}" | docker login ${DOCKER_REGISTRY} --username "${DOCKER_USERNAME}" --password-stdin
-
     - name: Build and push
       id: docker_build
       uses: docker/build-push-action@v2
@@ -40,7 +39,7 @@ jobs:
         file: ./Dockerfile
         push: true
         platforms: linux/arm/v7
-        tags: rromanotero/test_repo_light_sensor:master
+        tags: ${{github.repository}}:${{github.sha}}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: mode=max,type=local,dest=/tmp/.buildx-cache-new
     - name: Move cache
@@ -48,187 +47,78 @@ jobs:
         rm -rf /tmp/.buildx-cache
         mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-    # - name: Run Buildx (push image)
-    #   if: success()
-    #   run: |
-    #     BRANCH_NAME=${GITHUB_REF##*/}
-    #     GITHUB_SHORT_SHA=$(echo ${GITHUB_SHA:0:7})
-    #     PROJECT_NAME=${GITHUB_REPOSITORY##*/}
-    #     ACCOUNT_OWNER=$(echo $GITHUB_REPOSITORY | cut -d/ -f1)
-    #
-    #     echo "TARGET_PLATFORM="$TARGET_PLATFORM
-    #     echo "GITHUB_REF="$GITHUB_REF
-    #     echo "BRANCH_NAME="$BRANCH_NAME
-    #     echo "GITHUB_SHA="$GITHUB_SHA
-    #     echo "GITHUB_SHORT_SHA="$GITHUB_SHORT_SHA
-    #     echo "GITHUB_REPOSITORY="$GITHUB_REPOSITORY
-    #     echo "ACCOUNT_OWNER="$ACCOUNT_OWNER
-    #     echo "PROJECT_NAME"=$PROJECT_NAME
-    #     echo "comma_separated_services_found="$comma_separated_services_found
-    #
-    #     IFS=',' read -r -a services_found <<< "$comma_separated_services_found"
-    #
-    #     for service_name in "${services_found[@]}"
-    #     do
-    #       IMAGE_VERSION=$BRANCH_NAME-$GITHUB_SHORT_SHA
-    #       IMAGE_NAME=$ACCOUNT_OWNER'/'$PROJECT_NAME'_'$service_name:$IMAGE_VERSION
-    #       SERVICE_PATH=services/$service_name
-    #       echo '----------------------------------------------------------'
-    #       echo 'Publishing image '$IMAGE_NAME' from path '$SERVICE_PATH
-    #       echo '----------------------------------------------------------'
-    #       cd services/$service_name
-    #       docker buildx build \
-    #         --cache-from type=local,src=/tmp/.buildx-cache \
-    #         --cache-to mode=max,type=local,dest=/tmp/.buildx-cache \
-    #         --platform  $TARGET_PLATFORM \
-    #         --tag $IMAGE_NAME \
-    #         --file ./Dockerfile \
-    #         --output type=image,push=true .
-    #       cd ../..
-    #     done
+  ####################################################################
+  ####################################################################
+  ####################################################################
 
-  ####################################################################
-  ####################################################################
-  ####################################################################
-  #
-  # upgrade_app_version:
-  #   runs-on: ubuntu-latest
-  #   needs: [build_and_publish]
-  #   steps:
-  #   - name: Checkout Helm Chart repo
-  #     uses: actions/checkout@v2
-  #     with:
-  #       persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
-  #       fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-  #       repository: ${{ github.repository }}_cd
-  #       ref: ${{ github.ref }}
-  #   - name: Detect Charts
-  #     if: success()
-  #     env:
-  #       ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
-  #     run: |
-  #       SERVICES_PATH=./services
-  #       echo "SERVICES_PATH="$SERVICES_PATH
-  #       echo ""
-  #
-  #       if [ ! -d $SERVICES_PATH ]; then
-  #         echo "services directory missing: "$SERVICES_PATH
-  #         exit 1
-  #       fi
-  #
-  #       charts_found=()
-  #       for path in $SERVICES_PATH/*; do
-  #         if [[ -d $path ]]; then
-  #           SERVICE_NAME=$(basename $path)
-  #           SVC_PATH=$SERVICES_PATH/$SERVICE_NAME
-  #
-  #           echo "Checking $SVC_PATH"
-  #
-  #           if [ ! -f $SVC_PATH/Chart.yaml ]; then
-  #             echo "service $SERVICE_NAME is missing its Chart.yaml"
-  #             echo "here's the contents of $SVC_PATH"
-  #             ls -l $SVC_PATH
-  #             exit 1
-  #           fi
-  #
-  #           echo "found service "$SERVICE_NAME
-  #           charts_found+=("$SERVICE_NAME")
-  #         fi
-  #       done
-  #
-  #       if [ ${#charts_found[@]} -eq 0 ]; then
-  #         echo "no charts found in ./services"
-  #         exit 1
-  #       else
-  #         num_of_charts_found="${#charts_found[@]}"
-  #         echo ""
-  #         echo "found a total of "$num_of_charts_found" charts"
-  #       fi
-  #
-  #       function join_by {
-  #         local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi;
-  #       }
-  #
-  #       comma_separated_charts_found=$(join_by , "${charts_found[@]}")
-  #       echo $comma_separated_charts_found
-  #
-  #       echo "::set-env name=comma_separated_charts_found::$comma_separated_charts_found"
-  #   - name: Upgrade Helm app version
-  #     if: success()
-  #     env:
-  #       COMMIT_MSG: ${{ github.event.head_commit.message }}
-  #     run: |
-  #       GITHUB_REPOSITORY_CHARTS=$GITHUB_REPOSITORY"_cd"
-  #       BRANCH_NAME=${GITHUB_REF##*/}
-  #       GITHUB_SHORT_SHA=$(echo ${GITHUB_SHA:0:7})
-  #       APP_VERSION=$BRANCH_NAME'-'$GITHUB_SHA
-  #       APP_VERSION_SHORT=$BRANCH_NAME'-'$GITHUB_SHORT_SHA
-  #
-  #       IFS=',' read -r -a charts_found <<< "$comma_separated_charts_found"
-  #
-  #       echo "GITHUB_REPOSITORY_CHARTS="$GITHUB_REPOSITORY_CHARTS
-  #       echo "BRANCH_NAME="$BRANCH_NAME
-  #       echo "GITHUB_SHA="$GITHUB_SHA
-  #       echo "GITHUB_SHORT_SHA="$GITHUB_SHORT_SHA
-  #       echo "APP_VERSION="$APP_VERSION
-  #       echo "APP_VERSION_SHORT="$APP_VERSION_SHORT
-  #       echo "COMMIT_MSG="$COMMIT_MSG
-  #
-  #       echo "comma_separated_charts_found="$comma_separated_charts_found
-  #
-  #       CHART_TEMPLATE_PATH=../chart_template.yaml
-  #       cat >$CHART_TEMPLATE_PATH<<EOL
-  #       apiVersion: v2
-  #       name: _APP_NAME_
-  #       description: A Helm chart for Kubernetes
-  #
-  #       type: application
-  #       version: 1.0.0
-  #       appVersion: _APP_VERSION_
-  #       EOL
-  #
-  #       for chart_name in "${charts_found[@]}"
-  #       do
-  #         sleep 1 ## so logs are not as out of order
-  #
-  #         CHART_PATH=services/$chart_name/Chart.yaml
-  #         VALUES_YAML_PATH=services/$chart_name/values.yaml
-  #
-  #         echo '--------------------------------'
-  #         echo 'Upgrade tag in values.yaml ('"$chart_name"')'
-  #
-  #         ORIGINAL_TAG_LINE=$(grep -F "tag:" $VALUES_YAML_PATH)
-  #         NEW_TAG_LINE='tag: '$APP_VERSION_SHORT
-  #         sed -i "s|$ORIGINAL_TAG_LINE|  $NEW_TAG_LINE|g" $VALUES_YAML_PATH
-  #
-  #
-  #         echo 'Upgrade app version ('"$chart_name"')'
-  #
-  #         APP_NAME=$(echo "$chart_name" | tr '_' '-')
-  #
-  #         cp $CHART_TEMPLATE_PATH $CHART_PATH
-  #
-  #         sed -i "s|_APP_NAME_|$APP_NAME|g" $CHART_PATH
-  #         sed -i "s|_APP_VERSION_|$APP_VERSION|g" $CHART_PATH
-  #
-  #         echo '|||| chart contents ||||'
-  #         cat $CHART_PATH
-  #         echo '|||| chart contents ||||'
-  #         echo '--------------------------------'
-  #       done
-  #
-  #       git config --global hub.protocol https
-  #       git config --global user.email "github-actions@noreply.github.com"
-  #       git config --global user.name "github-actions"
-  #
-  #       set -x
-  #       git add . && git commit -m 'upgrade to '$APP_VERSION_SHORT'('"$COMMIT_MSG"')'
-  #       git diff HEAD^ HEAD
-  #
-  #   - name: Push changes
-  #     uses: ad-m/github-push-action@master
-  #     if: success()
-  #     with:
-  #       repository: ${{ github.repository }}_cd
-  #       github_token: ${{ secrets.PERSONAL_TOKEN }}
-  #       branch: ${{ github.ref }}
+  upgrade_helm_app_version:
+    runs-on: ubuntu-latest
+    needs: [build_and_publish]
+    steps:
+    - name: Checkout Helm Chart repo
+      uses: actions/checkout@v2
+      with:
+        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+        fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+        repository: ${{ github.repository }}_cd
+        ref: ${{ github.ref }}
+    - name: Upgrade Helm app version
+      if: success()
+      env:
+        COMMIT_MSG: ${{ github.event.head_commit.message }}
+      run: |
+        BRANCH_NAME=${GITHUB_REF##*/}
+        APP_VERSION=$BRANCH_NAME'-'$GITHUB_SHA
+        GITHUB_REPOSITORY_LASTNAME=${GITHUB_REPOSITORY##*/}
+
+        echo "GITHUB_REPOSITORY="$GITHUB_REPOSITORY
+        echo "GITHUB_REPOSITORY_LASTNAME="$GITHUB_REPOSITORY_LASTNAME
+        echo "BRANCH_NAME="$BRANCH_NAME
+        echo "GITHUB_SHA="$GITHUB_SHA
+        echo "APP_VERSION="$APP_VERSION
+        echo "COMMIT_MSG="$COMMIT_MSG
+
+        echo '---'
+        echo 'Set image repository (values.yaml)'
+
+        ORIGINAL_IMAGE_REPO_LINE=$(grep -F "repository:" chart/values.yaml)
+        NEW_IMAGE_REPO_LINE='repository: '$GITHUB_REPOSITORY
+        sed -i "s|$ORIGINAL_IMAGE_REPO_LINE|  $NEW_IMAGE_REPO_LINE|g" chart/values.yaml
+
+        echo 'Upgrade image tag (values.yaml)'
+
+        ORIGINAL_TAG_LINE=$(grep -F "tag:" chart/values.yaml)
+        NEW_TAG_LINE='tag: '$APP_VERSION
+        sed -i "s|$ORIGINAL_TAG_LINE|  $NEW_TAG_LINE|g" chart/values.yaml
+
+        echo 'Set chart name (Chart.yaml)'
+
+        ORIGINAL_NAME=$(grep -F "name:" chart/Chart.yaml)
+        NEW_NAME='name: '$GITHUB_REPOSITORY_LASTNAME
+        sed -i "s|$ORIGINAL_NAME|  $NEW_NAME|g" chart/Chart.yaml
+
+        echo 'Upgrade app version (Chart.yaml)'
+
+        ORIGINAL_VERSION_LINE=$(grep -F "appVersion:" chart/Chart.yaml)
+        NEW_VERSION_LINE='appVersion: '$APP_VERSION
+        sed -i "s|$ORIGINAL_VERSION_LINE|  $NEW_VERSION_LINE|g" chart/Chart.yaml
+
+        sed -i "s|_APP_NAME_|$APP_NAME|g" $CHART_PATH
+        sed -i "s|_APP_VERSION_|$APP_VERSION|g" $CHART_PATH
+        echo '---'
+
+        git config --global hub.protocol https
+        git config --global user.email "ci@noreply.com"
+        git config --global user.name "ci"
+
+        set -x
+        git add . && git commit -m 'upgrade to '$APP_VERSION_SHORT'('"$COMMIT_MSG"')'
+        git diff HEAD^ HEAD
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      if: success()
+      with:
+        repository: ${{ github.repository }}_cd
+        github_token: ${{ secrets.PERSONAL_TOKEN }}
+        branch: ${{ github.ref }}
