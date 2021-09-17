@@ -2,6 +2,9 @@ from flask import Flask, jsonify
 import os
 import sys
 import time
+
+os.system('ls -l /dev/')
+
 import busio
 from digitalio import DigitalInOut, Direction, Pull
 import board
