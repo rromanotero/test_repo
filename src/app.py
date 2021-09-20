@@ -110,20 +110,24 @@ display.show()
 #rfm69.node = 1
 #rfm69.destination = 2
 
+count = 0
 
 app = Flask(__name__)
 
 @app.route("/")
 def health_check():
+    global count
     print("Hey there, this is STDOUT")
     print("Hey there, this is STDERR", file=sys.stderr)
 
 
     # send a  mesage to destination_node from my_node
-    rfm69.send( bytes("hey!","UTF-8"), keep_listening=True )
+    count += 1
+    msg = f"hcheck {count}"
+    rfm69.send( bytes(msg,"UTF-8"), keep_listening=True )
 
     display.fill(0) # Draw a black filled box to clear the image.
-    display.text("hey!", width-85, height-7, 1)
+    display.text(msg, width-85, height-7, 1)
     display.show()
 
     return jsonify({
