@@ -107,7 +107,9 @@ display.show()
 # )
 
 # set node addresses
-rfm69.node = 1
+#rfm69.node = 1
+#rfm69.destination = 2
+
 
 app = Flask(__name__)
 
@@ -118,7 +120,6 @@ def health_check():
 
 
     # send a  mesage to destination_node from my_node
-    rfm69.destination = 2
     rfm69.send( bytes("hey!","UTF-8"), keep_listening=True )
 
     display.fill(0) # Draw a black filled box to clear the image.
