@@ -60,8 +60,7 @@ def health_check():
     print("Hey there, this is STDERR", file=sys.stderr)
 
     display.fill(0) # Draw a black filled box to clear the image.
-    button_a_data = bytes("Button A!\r\n","utf-8")
-    msg = 'Server Up (v3)'
+    msg = bytes("Tx Demo\r\n","utf-8")
     rfm69.send(msg)
     display.text(msg, width-85, height-7, 1)
     display.show()
