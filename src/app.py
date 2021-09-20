@@ -123,7 +123,7 @@ def health_check():
     count += 1
     rfm69.destination = 2
     message = f"Health Check {count}"
-    rfm69.send( bytes(message,"UTF-8") )
+    rfm69.send( bytes(message,"UTF-8"), keep_listening=True  )
 
     display.fill(0) # Draw a black filled box to clear the image.
     display.text(message, width-85, height-7, 1)
