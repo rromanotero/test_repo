@@ -115,6 +115,7 @@ count = 0
 
 @app.route("/")
 def health_check():
+    global count
     print("Hey there, this is STDOUT")
     print("Hey there, this is STDERR", file=sys.stderr)
 
