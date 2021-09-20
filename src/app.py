@@ -1,7 +1,9 @@
 from flask import Flask, jsonify
 import os
 import sys
+# Import Python System Libraries
 import time
+# Import Blinka Libraries
 import busio
 from digitalio import DigitalInOut, Direction, Pull
 import board
@@ -9,6 +11,21 @@ import board
 import adafruit_ssd1306
 # Import the RFM69 radio module.
 import adafruit_rfm69
+
+# Button A
+btnA = DigitalInOut(board.D5)
+btnA.direction = Direction.INPUT
+btnA.pull = Pull.UP
+
+# Button B
+btnB = DigitalInOut(board.D6)
+btnB.direction = Direction.INPUT
+btnB.pull = Pull.UP
+
+# Button C
+btnC = DigitalInOut(board.D12)
+btnC.direction = Direction.INPUT
+btnC.pull = Pull.UP
 
 # Create the I2C interface.
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -22,19 +39,18 @@ display.show()
 width = display.width
 height = display.height
 
-# RFM69 Configuration
+# Configure Packet Radio
 CS = DigitalInOut(board.CE1)
 RESET = DigitalInOut(board.D25)
 spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
+rfm69 = adafruit_rfm69.RFM69(spi, CS, RESET, 915.0)
+prev_packet = None
+# Optionally set an encryption key (16 byte AES key). MUST match both
+# on the transmitter and receiver (or be set to None to disable/the default).
+#rfm69.encryption_key = b'\x01\x02\x03\x04\x05\x06\x07\x08\x01\x02\x03\x04\x05\x06\x07\x08'
 
-# Attempt to set up the RFM69 Module
-try:
-    rfm69 = adafruit_rfm69.RFM69(spi, CS, RESET, 915.0)
-    display.text('RFM69: Detected', 0, 0, 1)
-except RuntimeError as error:
-    # Thrown on version mismatch
-    display.text('RFM69: ERROR', 0, 0, 1)
-    print('RFM69 Error: ', error)
+
+
 
 app = Flask(__name__)
 
@@ -44,7 +60,10 @@ def health_check():
     print("Hey there, this is STDERR", file=sys.stderr)
 
     display.fill(0) # Draw a black filled box to clear the image.
-    display.text('Server Up (v3)', width-85, height-7, 1)
+    button_a_data = bytes("Button A!\r\n","utf-8")
+    msg = 'Server Up (v3)'
+    rfm69.send(msg)
+    display.text(msg, width-85, height-7, 1)
     display.show()
 
     return jsonify({
